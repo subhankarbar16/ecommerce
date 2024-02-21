@@ -24,7 +24,7 @@ class WelcomeController extends Controller
        // dd(Carbon::now()->subDays(7));
 
         // $new_arrivals=Product::with('children.unit')->where('status',1)->where('created_at','>', Carbon::now()->subDays(7))->orderBy('created_at','DESC')->limit(8)->get();
-        DB::connection()->enableQueryLog();
+       // DB::connection()->enableQueryLog();
         $new_arrivals=ProductSize::with(['parent'=>function(Builder $query){
             $query->where(['status' => 1]);
     },'unit'])->where('status',1)->groupBy('product_id')->orderBy('id','DESC')->limit(8)->get();

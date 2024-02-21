@@ -15,6 +15,8 @@ export default function SiteSettings({ auth, sitesettings }) {
         meta_keyword: sitesettings.meta_keyword,
         meta_description: sitesettings.meta_description,
         default_currency:sitesettings.default_currency,
+        footer_copyright:sitesettings.footer_copyright,
+        footer_short_desc:sitesettings.footer_short_desc,
     });
     const submit = (e) => {
         e.preventDefault();
@@ -111,6 +113,20 @@ export default function SiteSettings({ auth, sitesettings }) {
                                         <InputError message={errors.default_currency} className="mt-2" />
                                     </div>
                                     <div >
+                                        <InputLabel htmlFor="footer_copyright" value="Footer Copyright Text" />
+                                        <TextInput
+                                            id="footer_copyright"
+                                            type="text"
+                                            name="footer_copyright"
+                                            value={data.footer_copyright}
+                                            className="mt-1 block w-full"
+                                            isFocused={true}
+                                            onChange={(e) => setData('footer_copyright', e.target.value)}
+                                        />
+                                        <InputError message={errors.footer_copyright} className="mt-2" />
+                                    </div>
+
+                                    <div >
                                         <InputLabel htmlFor="meta_keyword" value="Meta Keyword" />
                                         <TextInput
                                             id="meta_keyword"
@@ -122,6 +138,18 @@ export default function SiteSettings({ auth, sitesettings }) {
                                             onChange={(e) => setData('meta_keyword', e.target.value)}
                                         />
                                         <InputError message={errors.meta_keyword} className="mt-2" />
+                                    </div>
+                                    <div className="col-span-2">
+                                        <InputLabel htmlFor="footer_short_desc" value="Footer Short Description" />
+                                        <TextArea
+                                            id="footer_short_desc"
+                                            name="footer_short_desc"
+                                            className="mt-1 block w-full h-40"
+                                            col="4" row="6"
+                                            value={data.footer_short_desc}
+                                            onChange={(e) => setData('footer_short_desc', e.target.value)}
+                                        />
+                                        <InputError message={errors.footer_short_desc} className="mt-2" />
                                     </div>
                                     <div className="col-span-2">
                                         <InputLabel htmlFor="meta_description" value="Meta Description" />

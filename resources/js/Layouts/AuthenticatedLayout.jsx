@@ -9,7 +9,7 @@ import FlashMessage from '@/Components/FlashMessage';
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    const { configuration } = usePage().props
+    const { configuration } = usePage().props;
     let site_configuration = configuration.site;
     //console.log(children);
     return (

@@ -28,6 +28,8 @@ class SiteSettingUpdateRequest extends FormRequest
             'site_logo' => 'sometimes|extensions:jpg,png,jpeg,gif',
             'favicon' => 'sometimes|extensions:jpg,png,jpeg,gif',
             'default_currency'=>'required',
+            'footer_copyright'=>'required',
+            'footer_short_desc'=>'required',
         ];
     }
 }
