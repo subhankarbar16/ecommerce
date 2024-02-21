@@ -60,6 +60,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/categories/update/{id}', [CategoriesController::class, 'update'])->name('categories.update');
         Route::get('/categories/create', [CategoriesController::class, 'create'])->name('categories.create');
         Route::post('/categories/add', [CategoriesController::class, 'add'])->name('categories.add');
+        Route::get('/categories/deleted/{any?}', [CategoriesController::class, 'delete'])->name('categories.delete');
         
 
         /** Products */
@@ -71,7 +72,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/products/update/{id}', [ProductsController::class, 'update'])->name('products.update');
         Route::get('/products/create', [ProductsController::class, 'create'])->name('products.create');
         Route::post('/products/add', [ProductsController::class, 'add'])->name('products.add');
-
+        Route::get('/products/deleted/{any?}', [ProductsController::class, 'delete'])->name('products.delete');
        /** Office Locations */
 
        Route::get('/officelocations', [OfficeLocationsController::class, 'index'])->name('officelocations');

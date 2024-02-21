@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+    public $timestamp=true;
     protected $table="products";
-    protected $fillable = ['product_name', 'category_id','product_image','product_description','status'];
+    protected $fillable = ['product_name', 'category_id','product_image','product_description','status','deleted_at','is_featured'];
 
     public function parent()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id')->where('deleted_at',NULL);
     }
 
     public function children()

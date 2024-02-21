@@ -6,6 +6,7 @@ import TextArea from '@/Components/TextArea';
 import SelectInput from '@/Components/SelectInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm,usePage,Link } from '@inertiajs/react';
+import Checkbox from '@/Components/Checkbox';
 import {useEffect} from 'react';
 
 export default function ProductAdd({ auth, categories,product,product_units }) {
@@ -17,6 +18,7 @@ export default function ProductAdd({ auth, categories,product,product_units }) {
         product_name: product.product_name,
         category_id: product.category_id,
         product_image: '',
+        is_featured:product.is_featured ? true : false,
         // product_sku: '',
         // product_stock: 0,
         product_description:product.product_description ? product.product_description : '',
@@ -197,19 +199,20 @@ export default function ProductAdd({ auth, categories,product,product_units }) {
                                         <InputError message={errors.product_description} className="mt-2" />
                                     </div>
                                     
-                                    {/* <div >
-                                        <InputLabel htmlFor="product_stock" value="Product Stock" />
-                                        <TextInput
-                                            id="product_stock"
-                                            type="text"
-                                            name="product_stock"
-                                            value={data.product_stock}
-                                            className="mt-1 block w-full"
-                                            isFocused={true}
-                                            onChange={(e) => setData('product_stock', e.target.value)}
-                                        />
-                                        <InputError message={errors.product_stock} className="mt-2" />
-                                    </div> */}
+                                    <div >
+                                    <div className="grid grid-cols-1 mt-8">
+                                        <label className="flex items-center">
+                                            <Checkbox
+                                                name="is_featured"
+                                                checked={data.is_featured}
+                                                onChange={(e) => setData('is_featured', e.target.checked)}
+                                            />
+                                            <span className="ms-2 text-sm text-gray-600">Is featured Collection ?</span>
+                                        </label>
+                                       
+                                       
+                                        </div>
+                                    </div>
                                     <div className="col-span-2">
                                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
