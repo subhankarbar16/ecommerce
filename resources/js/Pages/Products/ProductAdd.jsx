@@ -1,5 +1,6 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
+import Checkbox from '@/Components/Checkbox';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import TextArea from '@/Components/TextArea';
@@ -29,6 +30,7 @@ export default function ProductAdd({ auth, categories,product_units }) {
             mrp:'',
             stock:'',
             status:0,
+            is_featured : false,
 
         }],
     });
@@ -153,20 +155,6 @@ export default function ProductAdd({ auth, categories,product_units }) {
                                         />
                                         <InputError message={errors.product_unit} className="mt-2" />
                                     </div>
-                                    {/* <div >
-                                        <InputLabel htmlFor="product_mrp" value={`Product MRP (${site_configuration.default_currency})`} />
-                                        <TextInput
-                                            id="product_mrp"
-                                            type="text"
-                                            name="product_mrp"
-                                            value={data.product_mrp}
-                                            className="mt-1 block w-full"
-                                            isFocused={true}
-                                            onChange={(e) => setData('product_mrp', e.target.value)}
-                                        />
-                                        <InputError message={errors.product_mrp} className="mt-2" />
-                                    </div> */}
-                                    
                                     <div >
                                         <InputLabel htmlFor="product_image" value="Product Image" />
                                         <TextInput
@@ -179,21 +167,6 @@ export default function ProductAdd({ auth, categories,product_units }) {
                                         />
                                         <InputError message={errors.product_image} className="mt-2" />
                                     </div>
-                                    
-                                    {/* <div >
-                                        <InputLabel htmlFor="product_sku" value="Product SKU" />
-                                        <TextInput
-                                            id="product_sku"
-                                            type="text"
-                                            name="product_sku"
-                                            value={data.product_sku}
-                                            className="mt-1 block w-full"
-                                            isFocused={true}
-                                            onChange={(e) => setData('product_sku', e.target.value)}
-                                        />
-                                        <InputError message={errors.product_sku} className="mt-2" />
-                                    </div> */}
-                                    
                                     <div >
                                         <InputLabel htmlFor="product_description" value="Product Description" />
                                         <TextArea
@@ -207,19 +180,20 @@ export default function ProductAdd({ auth, categories,product_units }) {
                                         <InputError message={errors.product_description} className="mt-2" />
                                     </div>
                                     
-                                    {/* <div >
-                                        <InputLabel htmlFor="product_stock" value="Product Stock" />
-                                        <TextInput
-                                            id="product_stock"
-                                            type="text"
-                                            name="product_stock"
-                                            value={data.product_stock}
-                                            className="mt-1 block w-full"
-                                            isFocused={true}
-                                            onChange={(e) => setData('product_stock', e.target.value)}
-                                        />
-                                        <InputError message={errors.product_stock} className="mt-2" />
-                                    </div> */}
+                                    <div >
+                                    <div className="grid grid-cols-1 mt-8">
+                                        <label className="flex items-center">
+                                            <Checkbox
+                                                name="is_featured"
+                                                checked={data.is_featured}
+                                                onChange={(e) => setData('is_featured', e.target.checked)}
+                                            />
+                                            <span className="ms-2 text-sm text-gray-600">Is featured Collection ?</span>
+                                        </label>
+                                       
+                                       
+                                        </div>
+                                    </div>
                                     <div className="col-span-2">
                                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

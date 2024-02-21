@@ -13,24 +13,35 @@ use Inertia\Inertia;
 use Inertia\Response;
 use DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 
 class ProductsController extends Controller
 {
     public function index(Request $request,string $keyword='')
     {
+        $productQuery=Product::query();
+        
+        $productQuery->with(['parent'=>function(Builder $query){
+            $query->select('id','category_name');
+        },'children.unit'])->select('id','product_name','category_id','product_image','status')->where('deleted_at',NULL);
+
         if(!empty($keyword)){
-            $products=Product::select('id','product_name','product_sku','category_id','product_image','product_mrp','product_price','product_stock','status')
-            ->orWhere('product_name','like',$keyword.'%')
-            ->orWhere('id',$keyword)
-            ->orWhere('product_sku','like',$keyword.'%')
-            ->orWhere(['product_mrp'=>$keyword,'product_price'=>$keyword])
-            ->orderBy('created_at')
-            ->with('parent')
-            ->paginate(10);
-        }else{
-            $products=Product::select('id','product_name','product_sku','category_id','product_image','product_mrp','product_price','product_stock','status')->orderBy('created_at')->with('parent')->paginate(10);
+            DB::connection()->enableQueryLog();
+            $productsize=ProductSize::select('id','product_id')->orWhere('sku','LIKE',$keyword.'%')->orWhere('price','LIKE',$keyword)->orWhere('mrp','LIKE',$keyword)->get();
+            //dd(DB::getQueryLog(),$productsize);
+            $productIds=!empty($productsize) ? array_column(json_decode(json_encode($productsize),true),'product_id') : array(0);
+            //dd($productIds);
+            $productQuery->where(function(Builder $query) use($keyword,$productIds){
+                $query->orWhere('product_name','like',$keyword.'%')
+                ->orWhere('id',$keyword)
+                ->orWhereIn('id',$productIds);
+                
+            });
         }
+        
+
+        $products=$productQuery->orderBy('created_at')->with('parent')->paginate(10);
        
         if ($request->hasHeader('search')) {
             return response()->json($products);
@@ -42,14 +53,14 @@ class ProductsController extends Controller
         }
     }
 
-    public function activate(string $productId): RedirectResponse
+    public function activate(string $productId)
     {
         if(empty($productId)){
             $request->session()->flash('message', 'Invalid Request.');
             return redirect()->route('products');
         }
 
-        $product=Product::select('id','status')->find($productId);
+        $product=Product::select('id','status')->where('deleted_at',NULL)->find($productId);
 
         if(empty($product)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -57,6 +68,27 @@ class ProductsController extends Controller
         }
 
         $product->status=1-$product->status;
+        $product->update();
+
+        return redirect()->route('products');
+
+    }
+
+    public function delete(string $productId)
+    {
+        if(empty($productId)){
+            $request->session()->flash('message', 'Invalid Request.');
+            return redirect()->route('products');
+        }
+
+        $product=Product::select('id','deleted_at')->where('deleted_at',NULL)->find($productId);
+
+        if(empty($product)){
+            $request->session()->flash('message', 'Invalid Request.');
+            return redirect()->route('products');
+        }
+
+        $product->deleted_at=Carbon::now();
         $product->update();
 
         return redirect()->route('products');
@@ -98,6 +130,7 @@ class ProductsController extends Controller
         $data['status']=1;
         try{
             DB::beginTransaction();
+            $data['is_featured']=$data['is_featured'] ? 1 : 0 ;
             $product=Product::create($data);
             if($product->id){
                 $variants=array_map(function($item) use ($product,$data){
@@ -135,7 +168,7 @@ class ProductsController extends Controller
             return redirect()->route('products');
         }
 
-        $product=Product::with('children.unit')->select('id', 'product_name', 'product_description', 'category_id', 'product_price', 'product_mrp', 'product_image', 'product_sku', 'product_stock')->find($productId);
+        $product=Product::with('children.unit')->select('id', 'product_name', 'product_description', 'category_id', 'product_image','is_featured')->find($productId);
         
 
         if(empty($product)){
@@ -197,6 +230,7 @@ class ProductsController extends Controller
 
         try{
             DB::beginTransaction();
+            $data['is_featured']=$data['is_featured'] ? 1 : 0 ;
             $product->update($data);
             $variants=array_map(function($item) use ($productId,$data){
                 if(!empty($item['id'])){

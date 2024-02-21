@@ -9,19 +9,24 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 use DB;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class CategoriesController extends Controller
 {
     public function index(Request $request,string $keyword='')
     {
-
+        $categoryQuery=Category::query();
+        $categoryQuery->with('parent')->select('id','category_name','category_image','parent_id','status')->where('deleted_at',NULL);
         if(!empty($keyword)){
-            $categories=Category::select('id','category_name','category_image','parent_id','status')->with('parent')->orWhere('category_name','like','%'.$keyword.'%')->orWhere('id',$keyword)->orderBy('created_at')->paginate(10);
+
+            $categoryQuery->where(function(Builder $query) use($keyword){
+                $query->orWhere('category_name','like','%'.$keyword.'%')->orWhere('id',$keyword);
+            });
             
-        }else{
-            $categories=Category::select('id','category_name','category_image','parent_id','status')
-            ->with('parent')->orderBy('created_at')->paginate(10);
         }
+            
+        $categories=$categoryQuery->orderBy('created_at')->paginate(10);
 
         if ($request->hasHeader('search')) {
             return response()->json($categories);
@@ -38,7 +43,7 @@ class CategoriesController extends Controller
 
     public function activate(string $categoryId): RedirectResponse
     {
-        $category=Category::select('id','status')->find($categoryId);
+        $category=Category::select('id','status')->where('deleted_at',NULL)->find($categoryId);
 
         if(empty($category)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -47,6 +52,23 @@ class CategoriesController extends Controller
 
         $category->status=1-$category->status;
         $category->update();
+
+        return redirect()->route('categories');
+
+    }
+
+    public function delete(string $categoryId): RedirectResponse
+    {
+        $category=Category::select('id','deleted_at','category_image')->where('deleted_at',NULL)->find($categoryId);
+
+        if(empty($category)){
+            $request->session()->flash('message', 'Invalid Request.');
+            return redirect()->route('categories');
+        }
+
+        $category->deleted_at=Carbon::now();
+        $category->update();
+        unlink(base_path('/public/images/categories/'.$category->category_image));
 
         return redirect()->route('categories');
 
@@ -64,7 +86,7 @@ class CategoriesController extends Controller
     {
         $data=$request->all();
 
-        $categoryExist=Category::select('id')->where('category_name',$data['category_name'])->first();
+        $categoryExist=Category::select('id')->where('deleted_at',NULL)->where('category_name',$data['category_name'])->first();
 
         if(!empty($categoryExist)){
             $request->session()->flash('message', 'Category already Exist');
@@ -88,6 +110,9 @@ class CategoriesController extends Controller
         $data['category_image']=$category_image_filename;
        
         try{
+            $data['incl_front_section']=$data['incl_front_section'] ? 1 : 0 ;
+            $data['incl_header']=$data['incl_header'] ? 1 : 0;
+            $data['incl_footer']=$data['incl_footer'] ? 1 :0;
             Category::create($data);
             $request->session()->flash('message', 'Category have been created successfully');
             return redirect()->route('categories');
@@ -111,7 +136,7 @@ class CategoriesController extends Controller
             return redirect()->route('categories');
         }
 
-        $category=Category::select('id','category_name','category_image','parent_id')->find($categoryId);
+        $category=Category::select('id','category_name','category_image','parent_id','incl_front_section', 'incl_header', 'incl_footer')->where('deleted_at',NULL)->find($categoryId);
 
         if(empty($category)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -136,7 +161,7 @@ class CategoriesController extends Controller
             return redirect()->route('categories');
         }
 
-        $category=Category::select('id','category_image')->find($categoryId);
+        $category=Category::select('id','category_image')->where('deleted_at',NULL)->find($categoryId);
 
         if(empty($category)){
             $request->session()->flash('message', 'Category doesnt exist.');
@@ -174,6 +199,9 @@ class CategoriesController extends Controller
         }
        
         try{
+            $data['incl_front_section']=$data['incl_front_section'] ? 1 : 0 ;
+            $data['incl_header']=$data['incl_header'] ? 1 : 0;
+            $data['incl_footer']=$data['incl_footer'] ? 1 :0;
             $category->update($data);
             $request->session()->flash('message', 'Category have been saved successfully');
             return redirect()->route('categories');

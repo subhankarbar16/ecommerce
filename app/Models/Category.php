@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
-
+    public $timestamp=true;
     protected $table="categories";
-    protected $fillable = ['category_name','category_image', 'status', 'parent_id'];
+    protected $fillable = ['category_name','category_image', 'status', 'parent_id','deleted_at','incl_front_section', 'incl_header', 'incl_footer'];
 
     
     public function parent()

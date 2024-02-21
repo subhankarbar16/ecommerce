@@ -12,6 +12,7 @@ export default function ProductList({ auth, products, keyword }) {
     function search(e) {
         let k = e.target.value;
         setKey(k);
+        window.history.replaceState(null, "", route('products.search', k));
         fetch(route("products.search", k), {
             method: "GET",
             headers: {
@@ -31,9 +32,9 @@ export default function ProductList({ auth, products, keyword }) {
     let heads = [
         "ID",
         "Name",
-        "SKU",
         "Image",
         "Category",
+        "SKU",
         "MRP",
         "Price",
         "Stock",
@@ -86,46 +87,55 @@ export default function ProductList({ auth, products, keyword }) {
                                     </thead>
                                     <tbody>
                                         {prod.data.map((product, index) => (
+                                            product.children.map((child, chindex) => (
                                             <tr
-                                                key={product.id}
+                                                key={product.id+'-'+child.id}
                                                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                                             >
-                                                <td className="px-6 py-4">
+                                              {  chindex == 0 ?
+                                                <>
+                                                <td className="px-2 py-4" rowspan={product.children.length}>
                                                     {product.id}
                                                 </td>
                                                 <th
                                                     scope="row"
-                                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                    className="px-2 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                    rowspan={product.children.length}
                                                 >
                                                     {product.product_name}
                                                 </th>
-                                                <td className="px-6 py-4">
-                                                    {product.product_sku}
-                                                </td>
-                                                <td className="px-6 py-4">
+                                               
+                                                <td className="px-2 py-4" rowspan={product.children.length}>
                                                     <img
                                                         className="w-20"
                                                         src={`/images/products/${product.product_image}`}
                                                     />
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                <td className="px-2 py-4" rowspan={product.children.length}>
                                                     {
                                                         product.parent
                                                             .category_name
                                                     }
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                </> : ''
+                                                }
+                                                <td className="px-2 py-4">
+                                                    {child.sku}
+                                                </td>
+                                                <td className="px-2 py-4">
                                                     {site_configuration.default_currency +
-                                                        product.product_mrp}
+                                                        child.mrp}
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                <td className="px-2 py-4">
                                                     {site_configuration.default_currency +
-                                                        product.product_price}
+                                                        child.price}
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    {product.product_stock}
+                                                <td className="px-2 py-4">
+                                                    {child.stock}
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                {  chindex == 0 ?
+                                                <>
+                                                <td className="px-2 py-4" rowspan={product.children.length}>
                                                     {product.status ? (
                                                         <font className="text-green-600">
                                                             Active
@@ -136,15 +146,9 @@ export default function ProductList({ auth, products, keyword }) {
                                                         </font>
                                                     )}
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <Link
-                                                        href={`/admin/products/edit/${product.id}`}
-                                                    >
-                                                        Edit
-                                                    </Link>{" "}
-                                                    |{" "}
-                                                    <Link
-                                                        href={`/admin/products/activate/${product.id}`}
+                                                <td className="px-2 py-4" rowspan={product.children.length}>
+                                                    <Link href={route('products.edit',product.id)} > Edit </Link> | <Link
+                                                        href={route('products.activate',product.id)}
                                                     >
                                                         {product.status ? (
                                                             <font className="text-red-900">
@@ -155,9 +159,12 @@ export default function ProductList({ auth, products, keyword }) {
                                                                 Activate
                                                             </font>
                                                         )}
-                                                    </Link>
+                                                    </Link> | <Link href={route('products.delete',product.id)} > Delete </Link>
                                                 </td>
+                                                </> : ''
+}
                                             </tr>
+                                            ))
                                         ))}
                                     </tbody>
                                 </table>

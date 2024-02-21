@@ -12,6 +12,7 @@ export default function CategoryList({ auth, categories,keyword }) {
     function search(e){
             let k=e.target.value;
             setKey(k);
+            window.history.replaceState(null, "", route('categories.search',k));
             fetch(route('categories.search',k), {
               method: "GET",
               headers: {
@@ -62,7 +63,7 @@ export default function CategoryList({ auth, categories,keyword }) {
                                                 {category.status ? <font className="text-green-600">Active</font> : <font className="text-red-600">Inactive</font>}
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                   <Link href={`/admin/categories/edit/${category.id}`}>Edit</Link> | <Link href={`/admin/categories/activate/${category.id}`}>{category.status ? <font className="text-red-900">Deactivate</font> : <font className="text-green-900">Activate</font>}</Link>
+                                                   <Link href={route('categories.edit',category.id)}>Edit</Link> | <Link href={route('categories.activate',category.id)}>{category.status ? <font className="text-red-900">Deactivate</font> : <font className="text-green-900">Activate</font>}</Link> |  <Link href={route('categories.delete',category.id)}>Delete</Link>
                                                 </td>
                                             </tr>
                                         ))}

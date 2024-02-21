@@ -6,6 +6,7 @@ import SelectInput from '@/Components/SelectInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { useState } from "react";
+import Checkbox from '@/Components/Checkbox';
 
 export default function CategoryEdit({ auth, categories,category }) {
     //console.log(sitesettings);
@@ -13,7 +14,10 @@ export default function CategoryEdit({ auth, categories,category }) {
         id:category.id,
         category_name: category.category_name,
         parent_id: category.parent_id,
-        category_image:''
+        category_image:'',
+        incl_front_section : category.incl_front_section ? true : false, 
+        incl_header : category.incl_header ? true : false, 
+        incl_footer : category.incl_footer ? true : false,
     });
 
     //console.log(recentlySuccessful);
@@ -77,6 +81,34 @@ export default function CategoryEdit({ auth, categories,category }) {
                                             onChange={(e) => setData('parent_id', setData('parent_id', e.target[e.target.selectedIndex].value))}
                                         />
                                         <InputError message={errors.parent_id} className="mt-2" />
+                                    </div>
+                                    <div >
+                                    <div className="grid grid-cols-3 gap-2 mt-8">
+                                        <label className="flex items-center">
+                                            <Checkbox
+                                                name="incl_front_section"
+                                                checked={data.incl_front_section}
+                                                onChange={(e) => setData('incl_front_section', e.target.checked)}
+                                            />
+                                            <span className="ms-2 text-sm text-gray-600">Display In Homepage</span>
+                                        </label>
+                                        <label className="flex items-center">
+                                            <Checkbox
+                                                name="incl_header"
+                                                checked={data.incl_header}
+                                                onChange={(e) => setData('incl_header', e.target.checked)}
+                                            />
+                                            <span className="ms-2 text-sm text-gray-600">Display In Header</span>
+                                        </label>
+                                        <label className="flex items-center">
+                                            <Checkbox
+                                                name="incl_footer"
+                                                checked={data.incl_footer}
+                                                onChange={(e) => setData('incl_footer', e.target.checked)}
+                                            />
+                                            <span className="ms-2 text-sm text-gray-600">Display In Footer</span>
+                                        </label>
+                                        </div>
                                     </div>
                                     <div className="col-span-2">
                                         <PrimaryButton className="float-right" disabled={processing}>
