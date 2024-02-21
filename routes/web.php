@@ -80,6 +80,7 @@ Route::prefix('admin')->group(function () {
        Route::put('/officelocations/update/{any?}', [OfficeLocationsController::class, 'update'])->name('officelocations.update');
        Route::get('/officelocations/create', [OfficeLocationsController::class, 'create'])->name('officelocations.create');
        Route::post('/officelocations/add', [OfficeLocationsController::class, 'add'])->name('officelocations.add');
+       Route::get('/officelocations/deleted/{any?}', [OfficeLocationsController::class, 'delete'])->name('officelocations.delete');
 
         /** Banners */
 

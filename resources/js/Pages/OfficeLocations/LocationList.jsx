@@ -12,6 +12,7 @@ export default function LocationList({ auth, locations, keyword }) {
     function search(e) {
         let k = e.target.value;
         setKey(k);
+        window.history.replaceState(null, "", route('officelocations.search', k));
         fetch(route('officelocations.search', k), {
             method: "GET",
             headers: {
@@ -64,7 +65,7 @@ export default function LocationList({ auth, locations, keyword }) {
                                                     {location.status ? <font className="text-green-600">Active</font> : <font className="text-red-600">Inactive</font>}
                                                 </td>
                                                 <td className="px-2 py-4">
-                                                    <Link href={`/admin/officelocations/edit/${location.id}`}>Edit</Link> | <Link href={`/admin/officelocations/activate/${location.id}`}>{location.status ? <font className="text-red-900">Deactivate</font> : <font className="text-green-900">Activate</font>}</Link>
+                                                    <Link href={route('officelocations.edit',location.id)}>Edit</Link> | <Link href={route('officelocations.activate',location.id)}>{location.status ? <font className="text-red-900">Deactivate</font> : <font className="text-green-900">Activate</font>}</Link> | <Link href={route('officelocations.delete',location.id)}>Delete</Link>
                                                 </td>
                                             </tr>
                                         ))}
