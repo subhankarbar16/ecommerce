@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Carbon;
 use App\Models\OfficeLocation;
 use App\Models\Country;
 use App\Http\Requests\OfficeLocationUpdateRequest;
@@ -11,27 +11,26 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 use DB;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class OfficeLocationsController extends Controller
 {
     public function index(Request $request,string $keyword='')
     {
-        if(!empty($keyword)){
-            $locations=OfficeLocation::select('id', 'street', 'city', 'state', 'zipcode', 'country_id', 'phone', 'status')
-            ->orWhere('street','like','%'.$keyword.'%')
-            ->orWhere('city','like',$keyword.'%')
-            ->orWhere('state','like',$keyword.'%')
-            ->orWhere('zipcode','like',$keyword.'%')
-            ->orWhere('phone','like',$keyword.'%')
-            ->with('parent')
-            ->paginate(10);
-        }else{
-            $locations=OfficeLocation::select('id', 'street', 'city', 'state', 'zipcode', 'country_id', 'phone', 'status')
-            ->with('parent')
-            ->paginate(2);
-        }
+        $locationsQuery=OfficeLocation::query();
 
-        if ($request->hasHeader('search')) {
+        $locationsQuery->with('parent')->select('id', 'street', 'city', 'state', 'zipcode', 'country_id', 'phone', 'status');
+        if(!empty($keyword)){
+            $locationsQuery->orWhere('street','like','%'.$keyword.'%')
+            ->where(function(Builder $query) use($keyword){
+                $query->orWhere('city','like',$keyword.'%')->orWhere('state','like',$keyword.'%')->orWhere('zipcode','like',$keyword.'%')->orWhere('phone','like',$keyword.'%');
+
+            });
+        }
+        
+        $locations=$locationsQuery->where('deleted_at',NULL)->paginate(10);
+
+        if($request->hasHeader('search')) {
             return response()->json($locations);
         }else{
             return Inertia::render('OfficeLocations/LocationList', [
@@ -54,6 +53,22 @@ class OfficeLocationsController extends Controller
         $location->status=1-$location->status;
         $location->update();
         $request->session()->flash('message', 'Office Location have been '.($location->status ? 'activated' : 'deactivated').' successfully');
+        return redirect()->route('officelocations');
+
+    }
+
+    public function delete(Request $request,string $id): RedirectResponse
+    {
+        $location=OfficeLocation::select('id','deleted_at')->find($id);
+
+        if(empty($location)){
+            $request->session()->flash('message', 'Invalid Request.');
+            return redirect()->route('officelocations');
+        }
+
+        $location->deleted_at=Carbon::now();
+        $location->update();
+        $request->session()->flash('message', 'Office Location have been deleted successfully');
         return redirect()->route('officelocations');
 
     }
