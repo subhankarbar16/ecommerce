@@ -114,6 +114,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/users/update/{any?}', [UsersController::class, 'update'])->name('users.update');
         Route::get('/users/create', [UsersController::class, 'create'])->name('users.create');
         Route::post('/users/add', [UsersController::class, 'add'])->name('users.add');
+        Route::get('/users/deleted/{any?}', [UsersController::class, 'delete'])->name('users.delete');
 
         /** Discounts */
 

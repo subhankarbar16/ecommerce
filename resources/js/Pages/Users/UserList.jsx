@@ -12,6 +12,7 @@ export default function UserList({ auth, users,keyword }) {
     function search(e){
             let k=e.target.value;
             setKey(k);
+            window.history.replaceState(null, "", route('users.search', k));
             fetch(route('users.search',k), {
               method: "GET",
               headers: {
@@ -64,7 +65,7 @@ export default function UserList({ auth, users,keyword }) {
                                                 {user.status ? <font className="text-green-600">Active</font> : <font className="text-red-600">Inactive</font>}
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                   <Link href={`/admin/users/edit/${user.id}`}>Edit</Link> | <Link href={`/admin/users/activate/${user.id}`}>{user.status ? <font className="text-red-900">Deactivate</font> : <font className="text-green-900">Activate</font>}</Link>
+                                                   <Link href={route('users.edit',user.id)}>Edit</Link> | <Link href={route('users.activate',user.id)}>{user.status ? <font className="text-red-900">Deactivate</font> : <font className="text-green-900">Activate</font>}</Link> | <Link href={route('users.delete',user.id)}>Delete</Link>
                                                 </td>
                                             </tr>
                                         ))}

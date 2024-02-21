@@ -41,7 +41,7 @@ class SocialLinksController extends Controller
 
     public function activate(Request $request,string $id): RedirectResponse
     {
-        $link=SocialLink::select('id','status')->find($id);
+        $link=SocialLink::select('id','status')->where('deleted_at',NULL)->find($id);
 
         if(empty($link)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -57,7 +57,7 @@ class SocialLinksController extends Controller
 
     public function delete(Request $request,string $id): RedirectResponse
     {
-        $link=SocialLink::select('id','deleted_at')->find($id);
+        $link=SocialLink::select('id','deleted_at')->where('deleted_at',NULL)->find($id);
 
         if(empty($link)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -104,7 +104,7 @@ class SocialLinksController extends Controller
             return redirect()->route('social_links');
         }
 
-        $link=SocialLink::select('id', 'title', 'link', 'icon')->find($id);
+        $link=SocialLink::select('id', 'title', 'link', 'icon')->where('deleted_at',NULL)->find($id);
 
         if(empty($link)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -125,7 +125,7 @@ class SocialLinksController extends Controller
             return redirect()->route('social_links');
         }
 
-        $link=SocialLink::select('id')->find($id);
+        $link=SocialLink::select('id')->where('deleted_at',NULL)->find($id);
 
         if(empty($link)){
             $request->session()->flash('message', 'Social Link doesnt exist.');

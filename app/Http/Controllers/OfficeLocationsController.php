@@ -42,7 +42,7 @@ class OfficeLocationsController extends Controller
 
     public function activate(Request $request,string $id): RedirectResponse
     {
-        $location=OfficeLocation::select('id','status')->find($id);
+        $location=OfficeLocation::select('id','status')->where('deleted_at',NULL)->find($id);
 
         if(empty($location)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -58,7 +58,7 @@ class OfficeLocationsController extends Controller
 
     public function delete(Request $request,string $id): RedirectResponse
     {
-        $location=OfficeLocation::select('id','deleted_at')->find($id);
+        $location=OfficeLocation::select('id','deleted_at')->where('deleted_at',NULL)->find($id);
 
         if(empty($location)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -122,7 +122,7 @@ class OfficeLocationsController extends Controller
             return redirect()->route('officelocations');
         }
 
-        $location=OfficeLocation::select('id', 'street', 'city', 'state', 'zipcode', 'country_id', 'phone')->find($id);
+        $location=OfficeLocation::select('id', 'street', 'city', 'state', 'zipcode', 'country_id', 'phone')->where('deleted_at',NULL)->find($id);
 
         if(empty($location)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -146,7 +146,7 @@ class OfficeLocationsController extends Controller
             return redirect()->route('officelocations');
         }
 
-        $location=OfficeLocation::select('id')->find($id);
+        $location=OfficeLocation::select('id')->where('deleted_at',NULL)->find($id);
 
         if(empty($location)){
             $request->session()->flash('message', 'Location doesnt exist.');

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Carbon;
 use App\Models\User;
 use App\Models\Country;
 use App\Http\Requests\UserUpdateRequest;
@@ -12,32 +12,26 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 use DB;
-
+use Illuminate\Contracts\Database\Eloquent\Builder;
 class UsersController extends Controller
 {
     public function index(Request $request,string $keyword='')
     {
 
-        
+        $userQuery=User::query();
+        $userQuery->with('parentCountry')->select('id','first_name','last_name','user_image','email','phone','status')->where(['user_type'=>1,'deleted_at'=>NULL]);
         if(!empty($keyword)){
-            $users=User::select('id','first_name','last_name','user_image','email','phone','status')
-            ->where(['user_type'=>1])
-            ->where('first_name','like',$keyword.'%')
-            ->orWhere('last_name','like',$keyword.'%')
-            ->orWhere('id',$keyword)
-            ->orWhere('email','like',$keyword.'%')
-            ->with('parentCountry')
-            ->paginate(2);
-        }else{
-            $users=User::select('id','first_name','last_name','user_image','email','phone','status')
-            ->where(['user_type'=>1])
-            ->orderBy('created_at')
-            ->with('parentCountry')
-            ->paginate(2);
+            $userQuery->where(function(Builder $query) use($keyword){
+                $query->where(['user_type'=>1])
+                ->where('first_name','like',$keyword.'%')
+                ->orWhere('last_name','like',$keyword.'%')
+                ->orWhere('id',$keyword)
+                ->orWhere('email','like',$keyword.'%');
+            });
         }
 
         //dd($users);
-       
+        $users=$userQuery->orderBy('created_at')->paginate(2);
         if ($request->hasHeader('search')) {
             return response()->json($users);
         }else{
@@ -55,7 +49,7 @@ class UsersController extends Controller
             return redirect()->route('users');
         }
 
-        $user=User::select('id','status')->find($userId);
+        $user=User::select('id','status')->where(['user_type'=>1,'deleted_at'=>NULL])->find($userId);
 
         if(empty($user)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -63,6 +57,27 @@ class UsersController extends Controller
         }
 
         $user->status=1-$user->status;
+        $user->update();
+
+        return redirect()->route('users');
+
+    }
+
+    public function delete(string $userId): RedirectResponse
+    {
+        if(empty($userId)){
+            $request->session()->flash('message', 'Invalid Request.');
+            return redirect()->route('users');
+        }
+
+        $user=User::select('id','deleted_at')->where(['user_type'=>1,'deleted_at'=>NULL])->find($userId);
+
+        if(empty($user)){
+            $request->session()->flash('message', 'Invalid Request.');
+            return redirect()->route('users');
+        }
+
+        $user->deleted_at=Carbon::now();
         $user->update();
 
         return redirect()->route('users');
@@ -118,14 +133,14 @@ class UsersController extends Controller
 
     }
 
-    public function edit(Request $request,string $userId): Response
+    public function edit(Request $request,string $userId)
     {
         if(empty($userId)){
             $request->session()->flash('message', 'Invalid Request.');
             return redirect()->route('users');
         }
 
-        $user=User::select('id','first_name', 'last_name', 'street', 'city', 'state', 'country_id', 'zipcode', 'email', 'phone', 'user_image', 'user_type')->find($userId);
+        $user=User::select('id','first_name', 'last_name', 'street', 'city', 'state', 'country_id', 'zipcode', 'email', 'phone', 'user_image', 'user_type')->where(['user_type'=>1,'deleted_at'=>NULL])->find($userId);
 
         if(empty($user)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -149,7 +164,7 @@ class UsersController extends Controller
             return redirect()->route('users');
         }
 
-        $user=User::select('id','first_name', 'last_name', 'street', 'city', 'state', 'country_id', 'zipcode', 'email', 'phone', 'user_image', 'user_type')->find($userId);
+        $user=User::select('id','first_name', 'last_name', 'street', 'city', 'state', 'country_id', 'zipcode', 'email', 'phone', 'user_image', 'user_type')->where(['user_type'=>1,'deleted_at'=>NULL])->find($userId);
 
         if(empty($user)){
             $request->session()->flash('message', 'Invalid Request.');
