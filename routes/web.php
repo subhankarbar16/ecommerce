@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\BannersController;
 use App\Http\Controllers\DiscountsController;
 use App\Http\Controllers\OfficeLocationsController;
+use App\Http\Controllers\ProductUnitsController;
 use App\Http\Controllers\SocialLinksController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\UsersController;
@@ -73,6 +74,18 @@ Route::prefix('admin')->group(function () {
         Route::get('/products/create', [ProductsController::class, 'create'])->name('products.create');
         Route::post('/products/add', [ProductsController::class, 'add'])->name('products.add');
         Route::get('/products/deleted/{any?}', [ProductsController::class, 'delete'])->name('products.delete');
+
+        /** Product Units */
+
+       Route::get('/productunits', [ProductUnitsController::class, 'index'])->name('productunits');
+       Route::get('/productunits/search/{any?}', [ProductUnitsController::class, 'index'])->name('productunits.search');
+       Route::get('/productunits/activate/{any?}', [ProductUnitsController::class, 'activate'])->name('productunits.activate');
+       Route::get('/productunits/edit/{any?}', [ProductUnitsController::class, 'edit'])->name('productunits.edit');
+       Route::put('/productunits/update/{any?}', [ProductUnitsController::class, 'update'])->name('productunits.update');
+       Route::get('/productunits/create', [ProductUnitsController::class, 'create'])->name('productunits.create');
+       Route::post('/productunits/add', [ProductUnitsController::class, 'add'])->name('productunits.add');
+       Route::get('/productunits/deleted/{any?}', [ProductUnitsController::class, 'delete'])->name('productunits.delete');
+
        /** Office Locations */
 
        Route::get('/officelocations', [OfficeLocationsController::class, 'index'])->name('officelocations');
