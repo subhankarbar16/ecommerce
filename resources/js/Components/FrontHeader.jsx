@@ -55,6 +55,10 @@ export default function FrontHeader({pageTitle}) {
         ev.preventDefault();
         windowScroll();
     })
+
+    window.addEventListener('click', function (e) {
+        dismissDropdownMenu();
+      });
     return (
 
         <nav id="topnav" className="defaultscroll is-sticky ">
@@ -210,7 +214,7 @@ export default function FrontHeader({pageTitle}) {
                             {categories.map((item,index) => (
                                 <li key={item.id} >
                                     <ul>
-                                        <li><Link class="font-extrabold" href={route('shop',item.category_name.toLowerCase().replace(/\s+/g, '-'))}>{item.category_name}</Link></li>
+                                        <li><Link className="font-extrabold" href={route('shop',item.category_name.toLowerCase().replace(/\s+/g, '-'))}>{item.category_name}</Link></li>
                                         {item.children.map((child,index) => (
                                          child.status==1 ? <li key={child.id}><Link href={route('shop',child.category_name.toLowerCase().replace(/\s+/g, '-'))} className="sub-menu-item">{child.category_name}</Link></li> : ''
                                         ))}

@@ -15,7 +15,7 @@ class SiteSettingsController extends Controller
      */
     public function index(Request $request): Response
     {
-        $sitesetting=SiteSetting::select('id', 'site_name', 'site_logo', 'favicon', 'support_email', 'support_phone', 'meta_keyword', 'meta_description','default_currency')->first();
+        $sitesetting=SiteSetting::select('id', 'site_name', 'site_logo', 'favicon', 'support_email', 'support_phone', 'meta_keyword', 'meta_description','default_currency','footer_copyright','footer_short_desc')->first();
 
         return Inertia::render('SiteSetting', [
             'sitesettings'=>$sitesetting,

@@ -256,11 +256,14 @@ class ProductsController extends Controller
         $category_name=trim($category_name)=='all' ? '' : trim(str_replace('-',' ',$category_name));
         $size=trim($size)=='all' ? '' : trim($size);
         $keyword=trim($keyword) ? trim($keyword) : '' ;
-        $product_sizes=ProductSize::with('unit')->select(['quantity','product_unit_id'])->where('status',1)->groupBy(['quantity','product_unit_id'])->get();
-        $flag=true;
-        $products=ProductSize::with(['unit','parent'=>function(Builder $query){
-                $query->where(['status' => 1]);
-        }])->where(['status'=>1])->orderBy('quantity','ASC')->paginate(9);
+        $product_sizes=ProductSize::with('unit')->select(['quantity','product_unit_id'])->where('deleted_at',NULL)->where('status',1)->groupBy(['quantity','product_unit_id'])->get();
+
+        $productSizequery = ProductSize::query();
+        $parentQuery=Product::query();
+        $unitQuery=ProductUnit::query();
+        $productSizequery->where(['status' => 1]);
+        $parentQuery->where(['status' => 1]);
+
         if(!empty($category_name)){
             $category=Category::with('children')->where(['status'=>1,'category_name'=>$category_name])->first();
             $cat_ids=[$category->id];
@@ -270,36 +273,43 @@ class ProductsController extends Controller
             }
             $productIds=Product::select('id')->whereIn('category_id',$cat_ids)->where('status',1)->get();
             $productIds=!empty($productIds) ? array_column(json_decode(json_encode($productIds),true),'id') : array(0);
-            $products=ProductSize::with(['unit','parent'=>function(Builder $query){
-                $query->where(['status' => 1]);
-             }])->where(['status'=>1])->whereIn('product_id',$productIds)->paginate(9);
-            $flag=false;
+            $productSizequery->whereIn('product_id',$productIds);
         }
 
         if(!empty($size)){
-            $flag=false;
             $sizeEx=explode('-',trim($size));
             $quantity=$sizeEx[0];
             unset($sizeEx[0]);
             $unit=implode(' ',$sizeEx);
-            $products=ProductSize::with(['unit'=>function(Builder $query) use ($unit){
-                $query->where(['unit_name' => $unit]);
-            },'parent'=>function(Builder $query){
-                $query->where(['status' => 1]);
-             },])->where(['status'=>1,'quantity'=>$quantity])->paginate(9);
+            $unitQuery->where(['unit_name' => $unit]);
+            $productSizequery->where('quantity',$quantity);
         }
 
         if(!empty($keyword)){
-            $flag=false;
+            $productIds2=Product::where('product_name','LIKE','%'.$keyword.'%')->get();
+           // dd($productIds2);
+            $productIds2=!empty($productIds2) ? array_column(json_decode(json_encode($productIds2),true),'id') : array(0);
+            //dd($productIds2);
+            $productSizequery->whereIn('product_id',$productIds2);
         }
 
-        return Inertia::render('Products/Shop', [
-            'products'=>$products,
-            'category_name'=>$category_name,
-            'size'=>$size,
-            'keyword'=>$keyword,
-            'product_sizes'=>$product_sizes,
-        ]);
+        $products=$productSizequery->with(['unit'=>function(Builder $query) use ($unitQuery){
+            $query=$unitQuery;
+        },'parent'=>function(Builder $query) use ($parentQuery){
+            $query=$parentQuery;
+         }])->paginate(9);
+
+         if ($request->hasHeader('search')) {
+            return response()->json($products);
+        }else{
+            return Inertia::render('Products/Shop', [
+                'products'=>$products,
+                'category_name'=>$category_name,
+                'size'=>$size,
+                'keyword'=>$keyword,
+                'product_sizes'=>$product_sizes,
+            ]);
+         }
     }
 
     public function product_detail(Request $request,string $product_name, string $product_sku)
