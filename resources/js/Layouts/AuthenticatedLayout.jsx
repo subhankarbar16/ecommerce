@@ -97,6 +97,7 @@ export default function Authenticated({ user, header, children }) {
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('categories')} active={route().current('categories')}>Categories</Dropdown.Link>
                                         <Dropdown.Link href={route('products')} active={route().current('products') || route().current('products.search') || route().current('products.edit') || route().current('products.create')}>Products</Dropdown.Link>
+                                        <Dropdown.Link href={route('productunits')} active={route().current('productunits') || route().current('productunits.search') || route().current('productunits.edit') || route().current('productunits.create')}>Product Units</Dropdown.Link>
                                        
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -199,6 +200,9 @@ export default function Authenticated({ user, header, children }) {
                         <ResponsiveNavLink href={route('products')} active={route().current('products') || route().current('products.search') || route().current('products.edit') || route().current('products.create')}>
                             Products
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('productunits')} active={route().current('productunits') || route().current('productunits.search') || route().current('productunits.edit') || route().current('productunits.create')}>
+                                    Product Units
+                                </ResponsiveNavLink>
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200">
