@@ -7,7 +7,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
 
-export default function CategoryAdd({ auth, countries }) {
+export default function LocationAdd({ auth, countries }) {
     console.log(countries);
     const { data, setData, post, processing, errors, reset } = useForm({
         street: '',

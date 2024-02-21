@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $categories=Category::with('children')->whereHas('children', function ($query) {
             $query->where('status','=','1');
         })->where(['status'=>1,'parent_id'=>NULL])->get();
-        $social_links=SocialLink::where('status',1)->get();
+        $social_links=SocialLink::where(['status'=>1,'deleted_at'=>NULL])->get();
        // dd($categories);
         \Config::set(['categories'=>$categories,'site'=> $site,'social_links'=>$social_links]);
        // \Config::set('site', $site);

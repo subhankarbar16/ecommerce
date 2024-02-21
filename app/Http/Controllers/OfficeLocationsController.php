@@ -21,9 +21,8 @@ class OfficeLocationsController extends Controller
 
         $locationsQuery->with('parent')->select('id', 'street', 'city', 'state', 'zipcode', 'country_id', 'phone', 'status');
         if(!empty($keyword)){
-            $locationsQuery->orWhere('street','like','%'.$keyword.'%')
-            ->where(function(Builder $query) use($keyword){
-                $query->orWhere('city','like',$keyword.'%')->orWhere('state','like',$keyword.'%')->orWhere('zipcode','like',$keyword.'%')->orWhere('phone','like',$keyword.'%');
+            $locationsQuery->where(function(Builder $query) use($keyword){
+                $query->orWhere('street','like','%'.$keyword.'%')->orWhere('city','like',$keyword.'%')->orWhere('state','like',$keyword.'%')->orWhere('zipcode','like',$keyword.'%')->orWhere('phone','like',$keyword.'%');
 
             });
         }

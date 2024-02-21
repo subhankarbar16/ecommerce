@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\BannersController;
 use App\Http\Controllers\DiscountsController;
 use App\Http\Controllers\OfficeLocationsController;
+use App\Http\Controllers\SocialLinksController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Foundation\Application;
@@ -81,6 +82,17 @@ Route::prefix('admin')->group(function () {
        Route::get('/officelocations/create', [OfficeLocationsController::class, 'create'])->name('officelocations.create');
        Route::post('/officelocations/add', [OfficeLocationsController::class, 'add'])->name('officelocations.add');
        Route::get('/officelocations/deleted/{any?}', [OfficeLocationsController::class, 'delete'])->name('officelocations.delete');
+
+       /** Social Links */
+
+       Route::get('/social_links', [SocialLinksController::class, 'index'])->name('social_links');
+       Route::get('/social_links/search/{any?}', [SocialLinksController::class, 'index'])->name('social_links.search');
+       Route::get('/social_links/activate/{any?}', [SocialLinksController::class, 'activate'])->name('social_links.activate');
+       Route::get('/social_links/edit/{any?}', [SocialLinksController::class, 'edit'])->name('social_links.edit');
+       Route::put('/social_links/update/{any?}', [SocialLinksController::class, 'update'])->name('social_links.update');
+       Route::get('/social_links/create', [SocialLinksController::class, 'create'])->name('social_links.create');
+       Route::post('/social_links/add', [SocialLinksController::class, 'add'])->name('social_links.add');
+       Route::get('/social_links/deleted/{any?}', [SocialLinksController::class, 'delete'])->name('social_links.delete');
 
         /** Banners */
 

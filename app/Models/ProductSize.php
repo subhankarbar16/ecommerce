@@ -10,6 +10,8 @@ class ProductSize extends Model
 {
     use HasFactory, MassUpdatable;
 
+    public $timestamps = true;
+
     protected $table='product_sizes';
     protected $fillable = ['product_id', 'product_unit_id', 'quantity', 'status', 'price'];
 

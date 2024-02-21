@@ -18,14 +18,16 @@ const Dropdown = ({ children }) => {
     );
 };
 
-const Trigger = ({ children }) => {
+const Trigger = ({ active=false, children }) => {
     const { open, setOpen, toggleOpen } = useContext(DropDownContext);
 
     return (
         <>
             <div onClick={toggleOpen}>{children}</div>
 
-            {open && <div className="fixed inset-0 z-40" onClick={() => setOpen(false)}></div>}
+            {open && <div className={`fixed inset-0 z-40${active
+                    ? ' border-indigo-400 text-gray-900 focus:border-indigo-700'
+                    : ''}`} onClick={() => setOpen(false)} ></div>}
         </>
     );
 };
@@ -70,13 +72,15 @@ const Content = ({ align = 'right', width = '48', contentClasses = 'py-1 bg-whit
     );
 };
 
-const DropdownLink = ({ className = '', children, ...props }) => {
+const DropdownLink = ({ active=false, className = '', children, ...props }) => {
     return (
         <Link
             {...props}
             className={
                 'block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out ' +
-                className
+                className + +(active
+                    ? ' border-indigo-400 text-gray-900 focus:border-indigo-700'
+                    : '')
             }
         >
             {children}

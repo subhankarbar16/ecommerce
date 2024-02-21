@@ -7,7 +7,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
 
-export default function CategoryEdit({ auth,location, countries }) {
+export default function LocationEdit({ auth,location, countries }) {
     console.log(countries);
     const { data, setData, put, processing, errors, reset } = useForm(location);
     const submit = (e) => {
