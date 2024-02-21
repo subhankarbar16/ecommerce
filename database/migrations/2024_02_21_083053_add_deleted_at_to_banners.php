@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('product_sizes', function (Blueprint $table) {
-            //$table->integer('stock',10,2)->defaults(0)->nullable();
+        Schema::table('banners', function (Blueprint $table) {
+            $table->timestamp('deleted_at')->nullable()->default(NULL);
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_sizes', function (Blueprint $table) {
+        Schema::table('banners', function (Blueprint $table) {
             //
         });
     }

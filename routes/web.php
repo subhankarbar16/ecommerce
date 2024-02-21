@@ -103,6 +103,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/banners/update/{any?}', [BannersController::class, 'update'])->name('banners.update');
         Route::get('/banners/create', [BannersController::class, 'create'])->name('banners.create');
         Route::post('/banners/add', [BannersController::class, 'add'])->name('banners.add');
+        Route::get('/banners/deleted/{any?}', [BannersController::class, 'delete'])->name('banners.delete');
 
         /** Users */
 

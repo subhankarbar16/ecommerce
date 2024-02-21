@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Carbon;
 use App\Models\Banner;
 use App\Http\Requests\BannerUpdateRequest;
 use Illuminate\Http\RedirectResponse;
@@ -9,24 +10,25 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 use DB;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class BannersController extends Controller
 {
     public function index(Request $request,string $keyword='')
     {
+        $bannerQuery=Banner::query();
+        $bannerQuery->select('id','title', 'banner_image','highlight', 'short_description', 'link', 'status', 'sorting_order')
+        ->where('deleted_at',NULL);
         if(!empty($keyword)){
-            $banners=Banner::select('id','title','highlight', 'banner_image', 'short_description', 'link', 'status', 'sorting_order')
-            ->orWhere('title','like',$keyword.'%')
-            ->orWhere('id',$keyword)
-            ->orWhere('short_description','like','%'.$keyword.'%')
-            ->orWhere('link', 'like','%'.$keyword.'%')
-            ->orderBy('created_at')
-            ->paginate(2);
-        }else{
-            $banners=Banner::select('id','title', 'banner_image','highlight', 'short_description', 'link', 'status', 'sorting_order')
-            ->orderBy('sorting_order')
-            ->paginate(2);
+            $bannerQuery->where(function(Builder $query) use($keyword){
+                $query->orWhere('title','like',$keyword.'%')
+                ->orWhere('id',$keyword)
+                ->orWhere('short_description','like','%'.$keyword.'%')
+                ->orWhere('link', 'like','%'.$keyword.'%');
+            });
+           
         }
+        $banners=$bannerQuery->orderBy('sorting_order')->paginate(10);
        
         if ($request->hasHeader('search')) {
             return response()->json($banners);
@@ -103,14 +105,14 @@ class BannersController extends Controller
 
     }
 
-    public function edit(Request $request,string $bannerId): Response
+    public function edit(Request $request,string $bannerId)
     {
         if(empty($bannerId)){
             $request->session()->flash('message', 'Invalid Request.');
             return redirect()->route('banners');
         }
 
-        $banner=Banner::select('id', 'title','highlight', 'banner_image', 'short_description', 'link', 'sorting_order')->find($bannerId);
+        $banner=Banner::select('id', 'title','highlight', 'banner_image', 'short_description', 'link', 'sorting_order')->where('deleted_at',NULL)->find($bannerId);
        // dd($banner);
         if(empty($banner)){
             $request->session()->flash('message', 'Invalid Request.');
@@ -135,7 +137,7 @@ class BannersController extends Controller
             return redirect()->route('banners');
         }
         
-        $banner=Banner::select('id','banner_image','sorting_order')->find($bannerId);
+        $banner=Banner::select('id','banner_image','sorting_order')->where('deleted_at',NULL)->find($bannerId);
        
 
         if(empty($banner)){
@@ -175,6 +177,24 @@ class BannersController extends Controller
         $request->session()->flash('message', 'Sorry, We are unable to save banner this time.');
         return redirect()->route('banners');
         
+
+    }
+
+    public function delete(Request $request,string $id): RedirectResponse
+    {
+        $banner=Banner::select('id','banner_image','sorting_order','deleted_at')->find($id);
+
+        if(empty($banner)){
+            $request->session()->flash('message', 'Invalid Request.');
+            return redirect()->route('banners');
+        }
+        Banner::where('sorting_order','>',$banner['sorting_order'])->where('id','!=',$banner['sorting_order'])->update(['sorting_order' => DB::raw('GREATEST(sorting_order - 1, 1)')]);
+        $banner->deleted_at=Carbon::now();
+        $banner->update();
+        
+        unlink(base_path('/public/images/banners/'.$banner->banner_image));
+        $request->session()->flash('message', 'Banner have been deleted successfully');
+        return redirect()->route('banners');
 
     }
 }

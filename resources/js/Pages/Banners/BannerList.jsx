@@ -11,6 +11,7 @@ export default function ProductList({ auth, banners,keyword }) {
     function search(e){
             let k=e.target.value;
             setKey(k);
+            window.history.replaceState(null, "", route('banners.search',k));
             fetch(route('banners.search',k), {
               method: "GET",
               headers: {
@@ -29,7 +30,7 @@ export default function ProductList({ auth, banners,keyword }) {
         console.log('useEffect');
 },[ban]);
     
-    let heads = ['ID','Title','Image','Highlight','Short Description','URL','Display Order','Status', 'Action']; 
+    let heads = ['ID','Title','Image','Highlight','URL','Display Order','Status', 'Action']; 
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -47,25 +48,25 @@ export default function ProductList({ auth, banners,keyword }) {
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
                                             {heads.map((head,index) => (
-                                                <th key={`key${index}`} scope="col" className="px-6 py-3">{head}</th>
+                                                <th key={`key${index}`} scope="col" className="px-2 py-3">{head}</th>
                                             ))}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {ban.data.map((banner,index) => (
                                             <tr key={banner.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                <td className="px-6 py-4">{banner.id}</td>
+                                                <td className="px-2 py-4">{banner.id}</td>
                                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{banner.title}</th>
-                                                <td className="px-6 py-4"><img className="w-20" src={`/images/banners/${banner.banner_image}`} /></td>
-                                                <td className="px-6 py-4">{banner.highlight}</td>
-                                                <td className="px-6 py-4">{banner.short_description}</td>
-                                                <td className="px-6 py-4"><a target="_blank" href={banner.link}>{banner.link}</a></td>
-                                                <td className="px-6 py-4">{banner.sorting_order}</td>
-                                                <td className="px-6 py-4">
+                                                <td className="px-2 py-4"><img className="w-20" src={`/images/banners/${banner.banner_image}`} /></td>
+                                                <td className="px-2 py-4">{banner.highlight}</td>
+                                                
+                                                <td className="px-2 py-4"><a target="_blank" href={banner.link}>{banner.link}</a></td>
+                                                <td className="px-2 py-4">{banner.sorting_order}</td>
+                                                <td className="px-2 py-4">
                                                 {banner.status ? <font className="text-green-600">Active</font> : <font className="text-red-600">Inactive</font>}
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                   <Link href={`/admin/banners/edit/${banner.id}`}>Edit</Link> | <Link href={`/admin/banners/activate/${banner.id}`}>{banner.status ? <font className="text-red-900">Deactivate</font> : <font className="text-green-900">Activate</font>}</Link>
+                                                <td className="px-2 py-4">
+                                                   <Link href={route('banners.edit',banner.id)}>Edit</Link> | <Link href={route('banners.activate',banner.id)}>{banner.status ? <font className="text-red-900">Deactivate</font> : <font className="text-green-900">Activate</font>}</Link> | <Link href={route('banners.delete',banner.id)}>Delete</Link>
                                                 </td>
                                             </tr>
                                         ))}
