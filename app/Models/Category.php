@@ -15,16 +15,16 @@ class Category extends Model
     
     public function parent()
     {
-        return $this->belongsTo(Category::class, 'parent_id');
+        return $this->belongsTo(Category::class, 'parent_id')->where('deleted_at',NULL);
     }
     public function children()
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return $this->hasMany(Category::class, 'parent_id')->where('deleted_at',NULL);
     }
 
     public function childrenProduct()
     {
-        return $this->hasMany(Product::class, 'category_id');
+        return $this->hasMany(Product::class, 'category_id')->where('deleted_at',NULL);
     }
 
 }

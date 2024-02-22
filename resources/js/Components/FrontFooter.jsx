@@ -17,7 +17,9 @@ export default function FrontFooter() {
                                 </a>
                                 <p className="mt-6 text-gray-300">{site_configuration.footer_short_desc}</p>
                                 <ul className="list-none mt-6">
-                                    <li className="inline"><a href="https://dribbble.com/shreethemes" target="_blank" className="size-8 inline-flex items-center justify-center tracking-wide align-middle text-base border border-gray-800 dark:border-slate-800 rounded-md hover:text-orange-500 dark:hover:text-orange-500 text-slate-300"><FeatherIcon icon="dribbble" className="h-4 w-4 align-middle" title="dribbble" /></a></li>
+                                {social_links.map((item,index)=>(
+                                    <li className="inline"><Link href={item.link} target="_blank" className="size-8 inline-flex items-center justify-center tracking-wide align-middle text-base border border-gray-800 dark:border-slate-800 rounded-md hover:text-orange-500 dark:hover:text-orange-500 text-slate-300"><FeatherIcon icon={item.icon} className="h-4 w-4 align-middle" title={item.icon} /></Link></li>
+                                ))}
                                     <li className="inline"><a href={`mailto:${site_configuration.support_email}`} className="size-8 inline-flex items-center justify-center tracking-wide align-middle text-base border border-gray-800 dark:border-slate-800 rounded-md hover:text-orange-500 dark:hover:text-orange-500 text-slate-300"><FeatherIcon icon="mail" className="h-4 w-4 align-middle" title="email" /></a></li>
                                 </ul>
                             </div>
@@ -26,18 +28,21 @@ export default function FrontFooter() {
                                 <h5 className="tracking-[1px] text-gray-100 font-semibold">Categories</h5>
 
                                 <div className="grid md:grid-cols-12 grid-cols-1">
+                                {categories.map((item,index) => (
                                     <div className="md:col-span-4">
                                         <ul className="list-none footer-list mt-6">
-                                            <li><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Men</a></li>
-                                            <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Jackets & Coats </a></li>
-                                            <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Jeans </a></li>
-                                            <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" />  Loungewear </a></li>
-                                            <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Polo shirts </a></li>
-                                            <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Shirts</a></li>
+                                        { item.incl_footer==1 ? 
+                                            <li><Link href={route('shop',item.category_name.toLowerCase().replace(/\s+/g, '-'))} className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> {item.category_name}</Link></li> : ''
+                                        }
+                                        {item.children.map((child,index) => (
+                                            child.incl_footer==1 ?
+                                            <li><Link href={route('shop',child.category_name.toLowerCase().replace(/\s+/g, '-'))} className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> {child.category_name}</Link></li> : ''
+                                        ))}  
                                         </ul>
                                     </div>
+                                ))}
 
-                                    <div className="md:col-span-4">
+                                    {/* <div className="md:col-span-4">
                                         <ul className="list-none footer-list mt-6">
                                             <li><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Shorts </a></li>
                                             <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Suits Swimwear </a></li>
@@ -46,9 +51,9 @@ export default function FrontFooter() {
                                             <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Trousers</a></li>
                                             <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Shirts</a></li>
                                         </ul>
-                                    </div>
+                                    </div> */}
 
-                                    <div className="md:col-span-4">
+                                    {/* <div className="md:col-span-4">
                                         <ul className="list-none footer-list mt-6">
                                             <li><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> My account </a></li>
                                             <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Order History </a></li>
@@ -57,11 +62,9 @@ export default function FrontFooter() {
                                             <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Affiliate</a></li>
                                             <li className="mt-[10px]"><a href="" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><i className="mdi mdi-chevron-right" /> Returns</a></li>
                                         </ul>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
-
-                           
                         </div>
                     </div>
                 </div>

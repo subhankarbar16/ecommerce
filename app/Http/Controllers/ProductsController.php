@@ -354,8 +354,10 @@ class ProductsController extends Controller
             return redirect()->route('shop');
         }
 
-        $new_arrivals=Product::with('children.unit')->where('status',1)->where('id','!=',$productsize->product_id)->orderBy('created_at','DESC')->limit(4)->get();
-        //dd($new_arrivals);
+        $new_arrivals=ProductSize::with(['parent'=>function(Builder $query){
+            $query->where(['status' => 1]);
+    },'unit'])->where('status',1)->groupBy('product_id')->orderBy('id','DESC')->limit(4)->get();
+       // dd($new_arrivals);
         return Inertia::render('Products/ProductDetail', [
             'product'=>$productsize,
             'new_arrivals'=>$new_arrivals,

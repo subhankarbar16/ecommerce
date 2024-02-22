@@ -212,11 +212,14 @@ export default function FrontHeader({pageTitle}) {
 
                             <ul className="submenu megamenu">
                             {categories.map((item,index) => (
+                                
                                 <li key={item.id} >
                                     <ul>
-                                        <li><Link className="font-extrabold" href={route('shop',item.category_name.toLowerCase().replace(/\s+/g, '-'))}>{item.category_name}</Link></li>
+                                   { item.incl_header==1 ? 
+                                        <li><Link className="font-extrabold" href={route('shop',item.category_name.toLowerCase().replace(/\s+/g, '-'))}>{item.category_name}</Link></li> : ''
+                                   }
                                         {item.children.map((child,index) => (
-                                         child.status==1 ? <li key={child.id}><Link href={route('shop',child.category_name.toLowerCase().replace(/\s+/g, '-'))} className="sub-menu-item">{child.category_name}</Link></li> : ''
+                                         child.incl_header==1 ? <li key={child.id}><Link href={route('shop',child.category_name.toLowerCase().replace(/\s+/g, '-'))} className="sub-menu-item">{child.category_name}</Link></li> : ''
                                         ))}
                                         
                                         
