@@ -17,7 +17,7 @@ class WelcomeController extends Controller
     public function index(Request $request):Response
     {
         $banners=Banner::select('id','title', 'banner_image','highlight', 'short_description', 'link')
-            ->where('status',1)
+            ->where(['status'=>1,'deleted_at'=>NULL])
             ->orderBy('sorting_order')
             ->get();
 
@@ -27,7 +27,7 @@ class WelcomeController extends Controller
        // DB::connection()->enableQueryLog();
         $new_arrivals=ProductSize::with(['parent'=>function(Builder $query){
             $query->where(['status' => 1]);
-    },'unit'])->where('status',1)->groupBy('product_id')->orderBy('id','DESC')->limit(8)->get();
+    },'unit'])->where(['status'=>1,'deleted_at'=>NULL])->groupBy('product_id')->orderByRaw("RAND()")->limit(8)->get();
 
    // $product_sizes=ProductSize::with(['parent','unit'])->get();
    //dd(DB::getQueryLog(),json_decode(json_encode($new_arrivals),true));
